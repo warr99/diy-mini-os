@@ -67,9 +67,12 @@ _start_32:
 		orl $(1 << 31), %eax
 		mov %eax, %cr0
 
+		mov $TASK0_TSS_SEG, %ax
+		ltr %ax 
+
 		push $APP_DATA_SEG
 		push $task0_dpl3_stack + 1024 * 4
-		push $0   //$0x202
+		push $0x202
 		push $APP_CODE_SEG
 		push $task_0_entry
 		iret
@@ -81,6 +84,10 @@ timer_int:
 	mov $0x20, %al
 	outb %al, $0x20
 
+	mov $KERNEL_DATA_SEG, %ax
+	mov %ax, %ds
+	call task_sched
+
 	popa
 	pop %ds
 
@@ -90,9 +97,7 @@ task_0_entry:
 	mov %ss, %ax
 	mov %ax, %ds
 	mov %ax, %es
-	mov %ax, %gs
-	mov %ax, %fs
-	jmp task_0
+	jmp task_0			// 跳转到任务0运行
 
 gdt_desc:
 	.word (256 * 8) - 1

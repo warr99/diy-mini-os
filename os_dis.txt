@@ -7,37 +7,37 @@ start address 0x00007c00
 
 Program Header:
     LOAD off    0x00000000 vaddr 0x00007000 paddr 0x00007000 align 2**12
-         filesz 0x00000ff0 memsz 0x00000ff0 flags r-x
-    LOAD off    0x00001000 vaddr 0x00009000 paddr 0x00009000 align 2**12
-         filesz 0x00003800 memsz 0x00005000 flags rw-
+         filesz 0x000010d4 memsz 0x000010d4 flags r-x
+    LOAD off    0x00002000 vaddr 0x0000a000 paddr 0x0000a000 align 2**12
+         filesz 0x000038ec memsz 0x00008100 flags rw-
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000395  00007c00  00007c00  00000c00  2**0
+  0 .text         00000423  00007c00  00007c00  00000c00  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .eh_frame     00000058  00007f98  00007f98  00000f98  2**2
+  1 .eh_frame     000000b0  00008024  00008024  00001024  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  2 .data         00003800  00009000  00009000  00001000  2**12
+  2 .data         000038ec  0000a000  0000a000  00002000  2**12
                   CONTENTS, ALLOC, LOAD, DATA
-  3 .bss          00001800  0000c800  0000c800  00004800  2**5
+  3 .bss          00004800  0000d900  0000d900  000058ec  2**5
                   ALLOC
-  4 .comment      00000011  00000000  00000000  00004800  2**0
+  4 .comment      00000011  00000000  00000000  000058ec  2**0
                   CONTENTS, READONLY
-  5 .debug_aranges 00000040  00000000  00000000  00004818  2**3
+  5 .debug_aranges 00000040  00000000  00000000  00005900  2**3
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000251  00000000  00000000  00004858  2**0
+  6 .debug_info   00000327  00000000  00000000  00005940  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 0000011d  00000000  00000000  00004aa9  2**0
+  7 .debug_abbrev 00000146  00000000  00000000  00005c67  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   000000ce  00000000  00000000  00004bc6  2**0
+  8 .debug_line   00000105  00000000  00000000  00005dad  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000017d  00000000  00000000  00004c94  2**0
+  9 .debug_str    000001d5  00000000  00000000  00005eb2  2**0
                   CONTENTS, READONLY, DEBUGGING
 SYMBOL TABLE:
 00007c00 l    d  .text	00000000 .text
-00007f98 l    d  .eh_frame	00000000 .eh_frame
-00009000 l    d  .data	00000000 .data
-0000c800 l    d  .bss	00000000 .bss
+00008024 l    d  .eh_frame	00000000 .eh_frame
+0000a000 l    d  .data	00000000 .data
+0000d900 l    d  .bss	00000000 .bss
 00000000 l    d  .comment	00000000 .comment
 00000000 l    d  .debug_aranges	00000000 .debug_aranges
 00000000 l    d  .debug_info	00000000 .debug_info
@@ -48,23 +48,32 @@ SYMBOL TABLE:
 00007c05 l       .text	00000000 offset
 00007c18 l       .text	00000000 read_self_all
 00007e00 l       .text	00000000 _start_32
-00007e57 l       .text	00000000 gdt_desc
-00007e5d l       .text	00000000 idt_desc
-00007e4a l       .text	00000000 task_0_entry
+00007e6b l       .text	00000000 gdt_desc
+00007e71 l       .text	00000000 idt_desc
+00007e5f l       .text	00000000 task_0_entry
 00000000 l    df *ABS*	00000000 os.c
-0000a000 l     O .data	00001000 pg_table
-0000c000 g     O .data	00000800 gdt_table
-0000c800 g     O .bss	00001000 task0_dpl3_stack
-00009000 g     O .data	00001000 map_phy_buffer
-00007e41 g       .text	00000000 timer_int
-00007e82 g     F .text	00000113 os_init
+0000b000 l     O .data	00001000 pg_table
+0000d8e8 l     O .data	00000004 task_tss.1769
+0000d0e8 g     O .data	00000800 gdt_table
+0000d900 g     O .bss	00001000 task0_dpl3_stack
+0000e900 g     O .bss	00001000 task1_dpl3_stack
+00007e77 g     F .text	00000016 task_0
+0000d000 g     O .data	00000068 task0_tss
+0000a000 g     O .data	00001000 map_phy_buffer
+00007e4b g       .text	00000000 timer_int
+00007efa g     F .text	00000129 os_init
+0000f900 g     O .bss	00001000 task1_dpl0_stack
+0000d080 g     O .data	00000068 task1_tss
 00007c00 g       .text	00000000 _start
-00007e63 g     F .text	0000001f outb
-0000c800 g       .bss	00000000 __bss_start
-0000b000 g     O .data	00001000 pg_dir
-0000c800 g       .data	00000000 _edata
-0000e000 g       .bss	00000000 _end
-0000d800 g     O .bss	00000800 idt_table
+00007ea3 g     F .text	0000001f outb
+0000d8ec g       .bss	00000000 __bss_start
+0000c000 g     O .data	00001000 pg_dir
+0000d8ec g       .data	00000000 _edata
+00012100 g       .bss	00000000 _end
+00007e8d g     F .text	00000016 task_1
+00010900 g     O .bss	00000800 idt_table
+00011100 g     O .bss	00001000 task0_dpl0_stack
+00007ec2 g     F .text	00000038 task_sched
 
 
 
@@ -118,14 +127,13 @@ read_self_all:
     7c28:	fa                   	cli    
 	lgdt gdt_desc
     7c29:	0f 01 16             	lgdtl  (%esi)
-    7c2c:	57                   	push   %edi
-    7c2d:	7e 0f                	jle    7c3e <read_self_all+0x26>
+    7c2c:	6b 7e 0f 01          	imul   $0x1,0xf(%esi),%edi
 	lidt idt_desc
-    7c2f:	01 1e                	add    %ebx,(%esi)
-    7c31:	5d                   	pop    %ebp
-    7c32:	7e 66                	jle    7c9a <read_self_all+0x82>
+    7c30:	1e                   	push   %ds
+    7c31:	71 7e                	jno    7cb1 <read_self_all+0x99>
 	mov $1, %eax
-    7c34:	b8 01 00 00 00       	mov    $0x1,%eax
+    7c33:	66 b8 01 00          	mov    $0x1,%ax
+    7c37:	00 00                	add    %al,(%eax)
 	lmsw %ax
     7c39:	0f 01 f0             	lmsw   %ax
 	jmp $KERNEL_CODE_SEG, $_start_32
@@ -152,10 +160,10 @@ _start_32:
     7e0a:	bc 00 7c 00 00       	mov    $0x7c00,%esp
 
 		call os_init
-    7e0f:	e8 6e 00 00 00       	call   7e82 <os_init>
+    7e0f:	e8 e6 00 00 00       	call   7efa <os_init>
 		
 		mov $pg_dir, %eax
-    7e14:	b8 00 b0 00 00       	mov    $0xb000,%eax
+    7e14:	b8 00 c0 00 00       	mov    $0xc000,%eax
 		mov %eax, %cr3
     7e19:	0f 22 d8             	mov    %eax,%cr3
 
@@ -173,194 +181,278 @@ _start_32:
 		mov %eax, %cr0
     7e2d:	0f 22 c0             	mov    %eax,%cr0
 
-		push $APP_DATA_SEG
-    7e30:	6a 23                	push   $0x23
-		push $task0_dpl3_stack + 1024 * 4
-    7e32:	68 00 d8 00 00       	push   $0xd800
-		push $0   //$0x202
-    7e37:	6a 00                	push   $0x0
-		push $APP_CODE_SEG
-    7e39:	6a 1b                	push   $0x1b
-		push $task_0_entry
-    7e3b:	68 4a 7e 00 00       	push   $0x7e4a
-		iret
-    7e40:	cf                   	iret   
+		mov $TASK0_TSS_SEG, %ax
+    7e30:	66 b8 28 00          	mov    $0x28,%ax
+		ltr %ax 
+    7e34:	0f 00 d8             	ltr    %ax
 
-00007e41 <timer_int>:
+		push $APP_DATA_SEG
+    7e37:	6a 23                	push   $0x23
+		push $task0_dpl3_stack + 1024 * 4
+    7e39:	68 00 e9 00 00       	push   $0xe900
+		push $0x202
+    7e3e:	68 02 02 00 00       	push   $0x202
+		push $APP_CODE_SEG
+    7e43:	6a 1b                	push   $0x1b
+		push $task_0_entry
+    7e45:	68 5f 7e 00 00       	push   $0x7e5f
+		iret
+    7e4a:	cf                   	iret   
+
+00007e4b <timer_int>:
 		
 timer_int:
 	push %ds
-    7e41:	1e                   	push   %ds
+    7e4b:	1e                   	push   %ds
 	pusha 
-    7e42:	60                   	pusha  
+    7e4c:	60                   	pusha  
 
 	mov $0x20, %al
-    7e43:	b0 20                	mov    $0x20,%al
+    7e4d:	b0 20                	mov    $0x20,%al
 	outb %al, $0x20
-    7e45:	e6 20                	out    %al,$0x20
+    7e4f:	e6 20                	out    %al,$0x20
+
+	mov $KERNEL_DATA_SEG, %ax
+    7e51:	66 b8 10 00          	mov    $0x10,%ax
+	mov %ax, %ds
+    7e55:	8e d8                	mov    %eax,%ds
+	call task_sched
+    7e57:	e8 66 00 00 00       	call   7ec2 <task_sched>
 
 	popa
-    7e47:	61                   	popa   
+    7e5c:	61                   	popa   
 	pop %ds
-    7e48:	1f                   	pop    %ds
+    7e5d:	1f                   	pop    %ds
 
 	iret
-    7e49:	cf                   	iret   
+    7e5e:	cf                   	iret   
 
-00007e4a <task_0_entry>:
+00007e5f <task_0_entry>:
 
 task_0_entry:
 	mov %ss, %ax
-    7e4a:	66 8c d0             	mov    %ss,%ax
+    7e5f:	66 8c d0             	mov    %ss,%ax
 	mov %ax, %ds
-    7e4d:	8e d8                	mov    %eax,%ds
+    7e62:	8e d8                	mov    %eax,%ds
 	mov %ax, %es
-    7e4f:	8e c0                	mov    %eax,%es
-	mov %ax, %gs
-    7e51:	8e e8                	mov    %eax,%gs
-	mov %ax, %fs
-    7e53:	8e e0                	mov    %eax,%fs
-	jmp .
-    7e55:	eb fe                	jmp    7e55 <task_0_entry+0xb>
+    7e64:	8e c0                	mov    %eax,%es
+	jmp task_0			// 跳转到任务0运行
+    7e66:	e9 0c 00 00 00       	jmp    7e77 <task_0>
 
-00007e57 <gdt_desc>:
-    7e57:	ff 07                	incl   (%edi)
-    7e59:	00 c0                	add    %al,%al
+00007e6b <gdt_desc>:
+    7e6b:	ff 07                	incl   (%edi)
+    7e6d:	e8                   	.byte 0xe8
+    7e6e:	d0 00                	rolb   (%eax)
 	...
 
-00007e5d <idt_desc>:
-    7e5d:	ff 07                	incl   (%edi)
-    7e5f:	00 d8                	add    %bl,%al
-	...
+00007e71 <idt_desc>:
+    7e71:	ff 07                	incl   (%edi)
+    7e73:	00 09                	add    %cl,(%ecx)
+    7e75:	01 00                	add    %eax,(%eax)
 
-00007e63 <outb>:
-    [APP_CODE_SEG / 8] = {0xffff, 0x0000, 0xfa00, 0x00cf},
-    [APP_DATA_SEG / 8] = {0xFFFF, 0x0000, 0xf300, 0x00cf},
+00007e77 <task_0>:
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+
+void task_0(void)
+{
+    7e77:	55                   	push   %ebp
+    7e78:	89 e5                	mov    %esp,%ebp
+    7e7a:	83 ec 10             	sub    $0x10,%esp
+    uint8_t color = 0;
+    7e7d:	c6 45 ff 00          	movb   $0x0,-0x1(%ebp)
+    for (;;)
+    {
+        color++;
+    7e81:	0f b6 45 ff          	movzbl -0x1(%ebp),%eax
+    7e85:	83 c0 01             	add    $0x1,%eax
+    7e88:	88 45 ff             	mov    %al,-0x1(%ebp)
+    7e8b:	eb f4                	jmp    7e81 <task_0+0xa>
+
+00007e8d <task_1>:
+    }
+}
+
+void task_1(void)
+{
+    7e8d:	55                   	push   %ebp
+    7e8e:	89 e5                	mov    %esp,%ebp
+    7e90:	83 ec 10             	sub    $0x10,%esp
+    uint8_t color = 0xff;
+    7e93:	c6 45 ff ff          	movb   $0xff,-0x1(%ebp)
+    for (;;)
+    {
+        color--;
+    7e97:	0f b6 45 ff          	movzbl -0x1(%ebp),%eax
+    7e9b:	83 e8 01             	sub    $0x1,%eax
+    7e9e:	88 45 ff             	mov    %al,-0x1(%ebp)
+    7ea1:	eb f4                	jmp    7e97 <task_1+0xa>
+
+00007ea3 <outb>:
+    [TASK0_TSS_SEG / 8] = {0x68, 0, 0xe900, 0x0},
+    [TASK1_TSS_SEG / 8] = {0x68, 0, 0xe900, 0x0},
 };
 
 void outb(uint8_t data, uint16_t port)
 {
-    7e63:	55                   	push   %ebp
-    7e64:	89 e5                	mov    %esp,%ebp
-    7e66:	83 ec 08             	sub    $0x8,%esp
-    7e69:	8b 55 08             	mov    0x8(%ebp),%edx
-    7e6c:	8b 45 0c             	mov    0xc(%ebp),%eax
-    7e6f:	88 55 fc             	mov    %dl,-0x4(%ebp)
-    7e72:	66 89 45 f8          	mov    %ax,-0x8(%ebp)
+    7ea3:	55                   	push   %ebp
+    7ea4:	89 e5                	mov    %esp,%ebp
+    7ea6:	83 ec 08             	sub    $0x8,%esp
+    7ea9:	8b 55 08             	mov    0x8(%ebp),%edx
+    7eac:	8b 45 0c             	mov    0xc(%ebp),%eax
+    7eaf:	88 55 fc             	mov    %dl,-0x4(%ebp)
+    7eb2:	66 89 45 f8          	mov    %ax,-0x8(%ebp)
     __asm__ __volatile__("outb %[v], %[p]" ::[p] "d"(port), [v] "a"(data));
-    7e76:	0f b7 55 f8          	movzwl -0x8(%ebp),%edx
-    7e7a:	0f b6 45 fc          	movzbl -0x4(%ebp),%eax
-    7e7e:	ee                   	out    %al,(%dx)
+    7eb6:	0f b7 55 f8          	movzwl -0x8(%ebp),%edx
+    7eba:	0f b6 45 fc          	movzbl -0x4(%ebp),%eax
+    7ebe:	ee                   	out    %al,(%dx)
 }
-    7e7f:	90                   	nop
-    7e80:	c9                   	leave  
-    7e81:	c3                   	ret    
+    7ebf:	90                   	nop
+    7ec0:	c9                   	leave  
+    7ec1:	c3                   	ret    
 
-00007e82 <os_init>:
+00007ec2 <task_sched>:
+
+void task_sched(void)
+{
+    7ec2:	55                   	push   %ebp
+    7ec3:	89 e5                	mov    %esp,%ebp
+    7ec5:	83 ec 10             	sub    $0x10,%esp
+    static int task_tss = TASK0_TSS_SEG;
+    task_tss = (task_tss == TASK0_TSS_SEG) ? TASK1_TSS_SEG : TASK0_TSS_SEG;
+    7ec8:	a1 e8 d8 00 00       	mov    0xd8e8,%eax
+    7ecd:	83 f8 28             	cmp    $0x28,%eax
+    7ed0:	75 07                	jne    7ed9 <task_sched+0x17>
+    7ed2:	b8 30 00 00 00       	mov    $0x30,%eax
+    7ed7:	eb 05                	jmp    7ede <task_sched+0x1c>
+    7ed9:	b8 28 00 00 00       	mov    $0x28,%eax
+    7ede:	a3 e8 d8 00 00       	mov    %eax,0xd8e8
+    uint32_t addr[] = {0, task_tss};
+    7ee3:	c7 45 f8 00 00 00 00 	movl   $0x0,-0x8(%ebp)
+    7eea:	a1 e8 d8 00 00       	mov    0xd8e8,%eax
+    7eef:	89 45 fc             	mov    %eax,-0x4(%ebp)
+    __asm__ __volatile__("ljmpl *(%[a])" ::[a] "r"(addr));
+    7ef2:	8d 45 f8             	lea    -0x8(%ebp),%eax
+    7ef5:	ff 28                	ljmp   *(%eax)
+}
+    7ef7:	90                   	nop
+    7ef8:	c9                   	leave  
+    7ef9:	c3                   	ret    
+
+00007efa <os_init>:
+
 void timer_int(void);
 
 void os_init(void)
 {
-    7e82:	55                   	push   %ebp
-    7e83:	89 e5                	mov    %esp,%ebp
-    7e85:	83 ec 10             	sub    $0x10,%esp
+    7efa:	55                   	push   %ebp
+    7efb:	89 e5                	mov    %esp,%ebp
+    7efd:	83 ec 10             	sub    $0x10,%esp
     outb(0x11, 0x20);
-    7e88:	6a 20                	push   $0x20
-    7e8a:	6a 11                	push   $0x11
-    7e8c:	e8 d2 ff ff ff       	call   7e63 <outb>
-    7e91:	83 c4 08             	add    $0x8,%esp
+    7f00:	6a 20                	push   $0x20
+    7f02:	6a 11                	push   $0x11
+    7f04:	e8 9a ff ff ff       	call   7ea3 <outb>
+    7f09:	83 c4 08             	add    $0x8,%esp
     outb(0x11, 0xA0);
-    7e94:	68 a0 00 00 00       	push   $0xa0
-    7e99:	6a 11                	push   $0x11
-    7e9b:	e8 c3 ff ff ff       	call   7e63 <outb>
-    7ea0:	83 c4 08             	add    $0x8,%esp
+    7f0c:	68 a0 00 00 00       	push   $0xa0
+    7f11:	6a 11                	push   $0x11
+    7f13:	e8 8b ff ff ff       	call   7ea3 <outb>
+    7f18:	83 c4 08             	add    $0x8,%esp
     outb(0x20, 0x21);
-    7ea3:	6a 21                	push   $0x21
-    7ea5:	6a 20                	push   $0x20
-    7ea7:	e8 b7 ff ff ff       	call   7e63 <outb>
-    7eac:	83 c4 08             	add    $0x8,%esp
+    7f1b:	6a 21                	push   $0x21
+    7f1d:	6a 20                	push   $0x20
+    7f1f:	e8 7f ff ff ff       	call   7ea3 <outb>
+    7f24:	83 c4 08             	add    $0x8,%esp
     outb(0x28, 0xA1);
-    7eaf:	68 a1 00 00 00       	push   $0xa1
-    7eb4:	6a 28                	push   $0x28
-    7eb6:	e8 a8 ff ff ff       	call   7e63 <outb>
-    7ebb:	83 c4 08             	add    $0x8,%esp
+    7f27:	68 a1 00 00 00       	push   $0xa1
+    7f2c:	6a 28                	push   $0x28
+    7f2e:	e8 70 ff ff ff       	call   7ea3 <outb>
+    7f33:	83 c4 08             	add    $0x8,%esp
     outb(1 << 2, 0x21);
-    7ebe:	6a 21                	push   $0x21
-    7ec0:	6a 04                	push   $0x4
-    7ec2:	e8 9c ff ff ff       	call   7e63 <outb>
-    7ec7:	83 c4 08             	add    $0x8,%esp
+    7f36:	6a 21                	push   $0x21
+    7f38:	6a 04                	push   $0x4
+    7f3a:	e8 64 ff ff ff       	call   7ea3 <outb>
+    7f3f:	83 c4 08             	add    $0x8,%esp
     outb(2, 0xa1);
-    7eca:	68 a1 00 00 00       	push   $0xa1
-    7ecf:	6a 02                	push   $0x2
-    7ed1:	e8 8d ff ff ff       	call   7e63 <outb>
-    7ed6:	83 c4 08             	add    $0x8,%esp
+    7f42:	68 a1 00 00 00       	push   $0xa1
+    7f47:	6a 02                	push   $0x2
+    7f49:	e8 55 ff ff ff       	call   7ea3 <outb>
+    7f4e:	83 c4 08             	add    $0x8,%esp
     outb(0x1, 0x21);
-    7ed9:	6a 21                	push   $0x21
-    7edb:	6a 01                	push   $0x1
-    7edd:	e8 81 ff ff ff       	call   7e63 <outb>
-    7ee2:	83 c4 08             	add    $0x8,%esp
+    7f51:	6a 21                	push   $0x21
+    7f53:	6a 01                	push   $0x1
+    7f55:	e8 49 ff ff ff       	call   7ea3 <outb>
+    7f5a:	83 c4 08             	add    $0x8,%esp
     outb(0x1, 0xA1);
-    7ee5:	68 a1 00 00 00       	push   $0xa1
-    7eea:	6a 01                	push   $0x1
-    7eec:	e8 72 ff ff ff       	call   7e63 <outb>
-    7ef1:	83 c4 08             	add    $0x8,%esp
+    7f5d:	68 a1 00 00 00       	push   $0xa1
+    7f62:	6a 01                	push   $0x1
+    7f64:	e8 3a ff ff ff       	call   7ea3 <outb>
+    7f69:	83 c4 08             	add    $0x8,%esp
     outb(0xfe, 0x21);
-    7ef4:	6a 21                	push   $0x21
-    7ef6:	68 fe 00 00 00       	push   $0xfe
-    7efb:	e8 63 ff ff ff       	call   7e63 <outb>
-    7f00:	83 c4 08             	add    $0x8,%esp
+    7f6c:	6a 21                	push   $0x21
+    7f6e:	68 fe 00 00 00       	push   $0xfe
+    7f73:	e8 2b ff ff ff       	call   7ea3 <outb>
+    7f78:	83 c4 08             	add    $0x8,%esp
     outb(0xff, 0xa1);
-    7f03:	68 a1 00 00 00       	push   $0xa1
-    7f08:	68 ff 00 00 00       	push   $0xff
-    7f0d:	e8 51 ff ff ff       	call   7e63 <outb>
-    7f12:	83 c4 08             	add    $0x8,%esp
+    7f7b:	68 a1 00 00 00       	push   $0xa1
+    7f80:	68 ff 00 00 00       	push   $0xff
+    7f85:	e8 19 ff ff ff       	call   7ea3 <outb>
+    7f8a:	83 c4 08             	add    $0x8,%esp
 
     int tmo = 1193180 / 100;
-    7f15:	c7 45 fc 9b 2e 00 00 	movl   $0x2e9b,-0x4(%ebp)
+    7f8d:	c7 45 fc 9b 2e 00 00 	movl   $0x2e9b,-0x4(%ebp)
     outb(0x36, 0x43);
-    7f1c:	6a 43                	push   $0x43
-    7f1e:	6a 36                	push   $0x36
-    7f20:	e8 3e ff ff ff       	call   7e63 <outb>
-    7f25:	83 c4 08             	add    $0x8,%esp
+    7f94:	6a 43                	push   $0x43
+    7f96:	6a 36                	push   $0x36
+    7f98:	e8 06 ff ff ff       	call   7ea3 <outb>
+    7f9d:	83 c4 08             	add    $0x8,%esp
     outb((uint16_t)tmo, 0x40);
-    7f28:	8b 45 fc             	mov    -0x4(%ebp),%eax
-    7f2b:	0f b6 c0             	movzbl %al,%eax
-    7f2e:	6a 40                	push   $0x40
-    7f30:	50                   	push   %eax
-    7f31:	e8 2d ff ff ff       	call   7e63 <outb>
-    7f36:	83 c4 08             	add    $0x8,%esp
+    7fa0:	8b 45 fc             	mov    -0x4(%ebp),%eax
+    7fa3:	0f b6 c0             	movzbl %al,%eax
+    7fa6:	6a 40                	push   $0x40
+    7fa8:	50                   	push   %eax
+    7fa9:	e8 f5 fe ff ff       	call   7ea3 <outb>
+    7fae:	83 c4 08             	add    $0x8,%esp
     outb(tmo >> 8, 0x40);
-    7f39:	8b 45 fc             	mov    -0x4(%ebp),%eax
-    7f3c:	c1 f8 08             	sar    $0x8,%eax
-    7f3f:	0f b6 c0             	movzbl %al,%eax
-    7f42:	6a 40                	push   $0x40
-    7f44:	50                   	push   %eax
-    7f45:	e8 19 ff ff ff       	call   7e63 <outb>
-    7f4a:	83 c4 08             	add    $0x8,%esp
+    7fb1:	8b 45 fc             	mov    -0x4(%ebp),%eax
+    7fb4:	c1 f8 08             	sar    $0x8,%eax
+    7fb7:	0f b6 c0             	movzbl %al,%eax
+    7fba:	6a 40                	push   $0x40
+    7fbc:	50                   	push   %eax
+    7fbd:	e8 e1 fe ff ff       	call   7ea3 <outb>
+    7fc2:	83 c4 08             	add    $0x8,%esp
 
     idt_table[0x20].offset_l = (uint32_t)timer_int & 0xFFFF;
-    7f4d:	b8 41 7e 00 00       	mov    $0x7e41,%eax
-    7f52:	66 a3 00 d9 00 00    	mov    %ax,0xd900
+    7fc5:	b8 4b 7e 00 00       	mov    $0x7e4b,%eax
+    7fca:	66 a3 00 0a 01 00    	mov    %ax,0x10a00
     idt_table[0x20].offset_h = (uint32_t)timer_int >> 16;
-    7f58:	b8 41 7e 00 00       	mov    $0x7e41,%eax
-    7f5d:	c1 e8 10             	shr    $0x10,%eax
-    7f60:	66 a3 06 d9 00 00    	mov    %ax,0xd906
+    7fd0:	b8 4b 7e 00 00       	mov    $0x7e4b,%eax
+    7fd5:	c1 e8 10             	shr    $0x10,%eax
+    7fd8:	66 a3 06 0a 01 00    	mov    %ax,0x10a06
     idt_table[0x20].selector = KERNEL_CODE_SEG;
-    7f66:	66 c7 05 02 d9 00 00 	movw   $0x8,0xd902
-    7f6d:	08 00 
+    7fde:	66 c7 05 02 0a 01 00 	movw   $0x8,0x10a02
+    7fe5:	08 00 
     idt_table[0x20].attr = 0x8E00;
-    7f6f:	66 c7 05 04 d9 00 00 	movw   $0x8e00,0xd904
-    7f76:	00 8e 
+    7fe7:	66 c7 05 04 0a 01 00 	movw   $0x8e00,0x10a04
+    7fee:	00 8e 
+
+    gdt_table[TASK0_TSS_SEG / 8].base_l = (uint16_t)(uint32_t)task0_tss;
+    7ff0:	b8 00 d0 00 00       	mov    $0xd000,%eax
+    7ff5:	66 a3 12 d1 00 00    	mov    %ax,0xd112
+    gdt_table[TASK1_TSS_SEG / 8].base_l = (uint16_t)(uint32_t)task1_tss;
+    7ffb:	b8 80 d0 00 00       	mov    $0xd080,%eax
+    8000:	66 a3 1a d1 00 00    	mov    %ax,0xd11a
 
     pg_dir[MAP_ADDR >> 22] = (uint32_t)pg_table | PDE_P | PDE_W | PDE_U;
-    7f78:	b8 00 a0 00 00       	mov    $0xa000,%eax
-    7f7d:	83 c8 07             	or     $0x7,%eax
-    7f80:	a3 00 b8 00 00       	mov    %eax,0xb800
+    8006:	b8 00 b0 00 00       	mov    $0xb000,%eax
+    800b:	83 c8 07             	or     $0x7,%eax
+    800e:	a3 00 c8 00 00       	mov    %eax,0xc800
     pg_table[(MAP_ADDR >> 12) & 0x3FF] = (uint32_t)map_phy_buffer | PDE_P | PDE_W | PDE_U;
-    7f85:	b8 00 90 00 00       	mov    $0x9000,%eax
-    7f8a:	83 c8 07             	or     $0x7,%eax
-    7f8d:	a3 00 a0 00 00       	mov    %eax,0xa000
+    8013:	b8 00 a0 00 00       	mov    $0xa000,%eax
+    8018:	83 c8 07             	or     $0x7,%eax
+    801b:	a3 00 b0 00 00       	mov    %eax,0xb000
 };
-    7f92:	90                   	nop
-    7f93:	c9                   	leave  
-    7f94:	c3                   	ret    
+    8020:	90                   	nop
+    8021:	c9                   	leave  
+    8022:	c3                   	ret    
