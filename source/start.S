@@ -5,7 +5,7 @@
 	#include "os.h"
 
 	// 声明本地以下符号是全局的，在其它源文件中可以访问
-	.global _start,timer_int
+	.global _start,timer_int,syscall_handler
 
 	// 指定以下的代码生成16位的机器指令,这样才能在启动时的实模式下运行
   	.code16
@@ -92,6 +92,26 @@ timer_int:
 	pop %ds
 
 	iret
+
+syscall_handler:
+	push %ds
+	pusha 
+
+	mov $KERNEL_DATA_SEG, %ax
+	mov %ax, %ds
+
+	mov %esp ,%ebp
+	push 13 * 4(%ebp)
+	push 12 * 4(%ebp)
+	push 11 * 4(%ebp)
+	call do_syscall
+	add $(3*4), %esp
+
+	popa
+	pop %ds
+
+	retf $(3*4)
+
 
 task_0_entry:
 	mov %ss, %ax

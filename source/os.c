@@ -7,21 +7,35 @@ typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 
-void task_0(void)
-{
-    uint8_t color = 0;
-    for (;;)
-    {
-        color++;
+void do_syscall(int func, char* str, char color) {
+    static int row = 0;
+    if (func == 2) {
+        unsigned short* dest = (unsigned short*)0xb8000 + 80 * row;
+        while (*str) {
+            *dest++ = *str++ | (color << 8);
+        }
+        row = (row >= 25) ? 0 : row + 1;
     }
 }
 
-void task_1(void)
-{
+void sys_show(char* str, char color) {
+    uint32_t addr[] = {0, SYSCALL_SEG};
+    __asm__ __volatile__("push %[color]; push %[str]; push %[id]; lcalll *(%[a])" ::[a] "r"(addr), [color] "m"(color), [str] "m"(str), [id] "r"(2));
+}
+
+void task_0(void) {
+    uint8_t color = 0;
+    char* str = "task_0: hello, syscall";
+    for (;;) {
+        sys_show(str, color++);
+    }
+}
+
+void task_1(void) {
     uint8_t color = 0xff;
-    for (;;)
-    {
-        color--;
+    char* str = "task_1: hello, syscall";
+    for (;;) {
+        sys_show(str, color--);
     }
 }
 
@@ -33,10 +47,10 @@ void task_1(void)
 
 uint8_t map_phy_buffer[4096] __attribute__((aligned(4096))) = {0x36};
 
-static uint32_t pg_table[1024] __attribute__((aligned(4096))) = {PDE_U}; // 要给个值，否则其实始化值不确定
+static uint32_t pg_table[1024] __attribute__((aligned(4096))) = {PDE_U};  // 要给个值，否则其实始化值不确定
 
 uint32_t pg_dir[1024] __attribute__((aligned(4096))) = {
-    [0] = (0) | PDE_P | PDE_PS | PDE_W | PDE_U, // PDE_PS，开启4MB的页，恒等映射
+    [0] = (0) | PDE_P | PDE_PS | PDE_W | PDE_U,  // PDE_PS，开启4MB的页，恒等映射
 };
 
 uint32_t task0_dpl0_stack[1024], task0_dpl3_stack[1024], task1_dpl0_stack[1024], task1_dpl3_stack[1024];
@@ -122,15 +136,14 @@ struct
     [APP_DATA_SEG / 8] = {0xFFFF, 0x0000, 0xf300, 0x00cf},
     [TASK0_TSS_SEG / 8] = {0x68, 0, 0xe900, 0x0},
     [TASK1_TSS_SEG / 8] = {0x68, 0, 0xe900, 0x0},
+    [SYSCALL_SEG / 8] = {0x0000, KERNEL_CODE_SEG, 0xec03, 0},
 };
 
-void outb(uint8_t data, uint16_t port)
-{
+void outb(uint8_t data, uint16_t port) {
     __asm__ __volatile__("outb %[v], %[p]" ::[p] "d"(port), [v] "a"(data));
 }
 
-void task_sched(void)
-{
+void task_sched(void) {
     static int task_tss = TASK0_TSS_SEG;
     task_tss = (task_tss == TASK0_TSS_SEG) ? TASK1_TSS_SEG : TASK0_TSS_SEG;
     uint32_t addr[] = {0, task_tss};
@@ -138,9 +151,9 @@ void task_sched(void)
 }
 
 void timer_int(void);
+void syscall_handler(void);
 
-void os_init(void)
-{
+void os_init(void) {
     outb(0x11, 0x20);
     outb(0x11, 0xA0);
     outb(0x20, 0x21);
@@ -164,6 +177,7 @@ void os_init(void)
 
     gdt_table[TASK0_TSS_SEG / 8].base_l = (uint16_t)(uint32_t)task0_tss;
     gdt_table[TASK1_TSS_SEG / 8].base_l = (uint16_t)(uint32_t)task1_tss;
+    gdt_table[SYSCALL_SEG / 8].limit_l = (uint16_t)(uint32_t)syscall_handler;
 
     pg_dir[MAP_ADDR >> 22] = (uint32_t)pg_table | PDE_P | PDE_W | PDE_U;
     pg_table[(MAP_ADDR >> 12) & 0x3FF] = (uint32_t)map_phy_buffer | PDE_P | PDE_W | PDE_U;
