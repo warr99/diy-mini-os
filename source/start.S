@@ -20,8 +20,6 @@ offset:
 	mov %ax, %ds
 	mov %ax, %es
 	mov %ax, %ss
-	mov %ax, %gs
-	mov %ax, %fs
 	mov $_start, %esp
 
 
@@ -70,12 +68,22 @@ _start_32:
 		mov $TASK0_TSS_SEG, %ax
 		ltr %ax 
 
-		push $APP_DATA_SEG
+		mov $TASK0_LDT_SEG, %ax
+		lldt %ax
+
+
+		push $TASK_DATA_SEG
 		push $task0_dpl3_stack + 1024 * 4
 		push $0x202
-		push $APP_CODE_SEG
+		push $TASK_CODE_SEG
 		push $task_0_entry
 		iret
+
+task_0_entry:
+	mov %ss, %ax
+	mov %ax, %ds
+	mov %ax, %es
+	jmp task_0			// 跳转到任务0运行
 		
 timer_int:
 	push %ds
@@ -113,12 +121,6 @@ syscall_handler:
 	retf $(3*4)
 
 
-task_0_entry:
-	mov %ss, %ax
-	mov %ax, %ds
-	mov %ax, %es
-	jmp task_0			// 跳转到任务0运行
-
 gdt_desc:
 	.word (256 * 8) - 1
 	.long gdt_table
@@ -126,4 +128,3 @@ gdt_desc:
 idt_desc:
 	.word (256 * 8) - 1
 	.long idt_table
-	

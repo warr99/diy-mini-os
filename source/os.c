@@ -8,13 +8,22 @@ typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 
 void do_syscall(int func, char* str, char color) {
-    static int row = 0;
+    static int row = 1;  // 初始值不能为0，否则其初始化值不确定
+
     if (func == 2) {
+        // 显示器共80列，25行，按字符显示，每个字符需要用两个字节表示
         unsigned short* dest = (unsigned short*)0xb8000 + 80 * row;
         while (*str) {
+            // 其中一个字节保存要显示的字符，另一个字节表示颜色
             *dest++ = *str++ | (color << 8);
         }
+
+        // 逐行显示，超过一行则回到第0行再显示
         row = (row >= 25) ? 0 : row + 1;
+
+        // 加点延时，让显示慢下来
+        for (int i = 0; i < 0xFFFFFF; i++)
+            ;
     }
 }
 
@@ -55,6 +64,20 @@ uint32_t pg_dir[1024] __attribute__((aligned(4096))) = {
 
 uint32_t task0_dpl0_stack[1024], task0_dpl3_stack[1024], task1_dpl0_stack[1024], task1_dpl3_stack[1024];
 
+struct {
+    uint16_t limit_l, base_l, basehl_attr, base_limit;
+} task0_ldt_table[256] __attribute__((aligned(8))) = {
+    [TASK_CODE_SEG / 8] = {0xffff, 0x0000, 0xfa00, 0x00cf},
+    [TASK_DATA_SEG / 8] = {0xFFFF, 0x0000, 0xf300, 0x00cf},
+};
+
+struct {
+    uint16_t limit_l, base_l, basehl_attr, base_limit;
+} task1_ldt_table[256] __attribute__((aligned(8))) = {
+    [TASK_CODE_SEG / 8] = {0xffff, 0x0000, 0xfa00, 0x00cf},
+    [TASK_DATA_SEG / 8] = {0xFFFF, 0x0000, 0xf300, 0x00cf},
+};
+
 uint32_t task0_tss[] = {
     // prelink, esp0, ss0, esp1, ss1, esp2, ss2
     0,
@@ -77,13 +100,13 @@ uint32_t task0_tss[] = {
     0x2,
     0x3,
     // es, cs, ss, ds, fs, gs, ldt, iomap
-    APP_DATA_SEG,
-    APP_CODE_SEG,
-    APP_DATA_SEG,
-    APP_DATA_SEG,
-    APP_DATA_SEG,
-    APP_DATA_SEG,
-    0x0,
+    TASK_DATA_SEG,
+    TASK_CODE_SEG,
+    TASK_DATA_SEG,
+    TASK_DATA_SEG,
+    TASK_DATA_SEG,
+    TASK_DATA_SEG,
+    TASK0_LDT_SEG,
     0x0,
 };
 
@@ -109,13 +132,13 @@ uint32_t task1_tss[] = {
     0x2,
     0x3,
     // es, cs, ss, ds, fs, gs, ldt, iomap
-    APP_DATA_SEG,
-    APP_CODE_SEG,
-    APP_DATA_SEG,
-    APP_DATA_SEG,
-    APP_DATA_SEG,
-    APP_DATA_SEG,
-    0x0,
+    TASK_DATA_SEG,
+    TASK_CODE_SEG,
+    TASK_DATA_SEG,
+    TASK_DATA_SEG,
+    TASK_DATA_SEG,
+    TASK_DATA_SEG,
+    TASK1_LDT_SEG,
     0x0,
 };
 
@@ -132,11 +155,16 @@ struct
     [KERNEL_CODE_SEG / 8] = {0xffff, 0x0000, 0x9a00, 0x00cf},
     // 0x00cf93000000ffff - 从0地址开始，P存在，DPL=0，Type=非系统段，数据段，界限4G，可读写
     [KERNEL_DATA_SEG / 8] = {0xFFFF, 0x0000, 0x9200, 0x00cf},
+
     [APP_CODE_SEG / 8] = {0xffff, 0x0000, 0xfa00, 0x00cf},
     [APP_DATA_SEG / 8] = {0xFFFF, 0x0000, 0xf300, 0x00cf},
+
     [TASK0_TSS_SEG / 8] = {0x68, 0, 0xe900, 0x0},
     [TASK1_TSS_SEG / 8] = {0x68, 0, 0xe900, 0x0},
     [SYSCALL_SEG / 8] = {0x0000, KERNEL_CODE_SEG, 0xec03, 0},
+
+    [TASK0_LDT_SEG / 8] = {sizeof(task0_ldt_table) - 1, 0x00, 0xe200, 0x00cf},
+    [TASK1_LDT_SEG / 8] = {sizeof(task1_ldt_table) - 1, 0x00, 0xe200, 0x00cf},
 };
 
 void outb(uint8_t data, uint16_t port) {
@@ -178,6 +206,8 @@ void os_init(void) {
     gdt_table[TASK0_TSS_SEG / 8].base_l = (uint16_t)(uint32_t)task0_tss;
     gdt_table[TASK1_TSS_SEG / 8].base_l = (uint16_t)(uint32_t)task1_tss;
     gdt_table[SYSCALL_SEG / 8].limit_l = (uint16_t)(uint32_t)syscall_handler;
+    gdt_table[TASK0_LDT_SEG / 8].base_l = (uint32_t)task0_ldt_table;
+    gdt_table[TASK1_LDT_SEG / 8].base_l = (uint32_t)task1_ldt_table;
 
     pg_dir[MAP_ADDR >> 22] = (uint32_t)pg_table | PDE_P | PDE_W | PDE_U;
     pg_table[(MAP_ADDR >> 12) & 0x3FF] = (uint32_t)map_phy_buffer | PDE_P | PDE_W | PDE_U;
